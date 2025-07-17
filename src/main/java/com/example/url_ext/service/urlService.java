@@ -48,7 +48,7 @@ public class urlService {
 
         // Wait for you to log in manually
         System.out.println("Please log in manually...");
-        Thread.sleep(20000); // 20 seconds pause
+        Thread.sleep(25000); // 20 seconds pause
 
         // Navigate to jobs page
         //driver.get("https://www.linkedin.com/jobs/search-results/?f_TPR=r3600&keywords=java%20developer&origin=JOBS_HOME_SEARCH_BUTTON");
@@ -61,7 +61,7 @@ public class urlService {
         List<WebElement> links = driver.findElements(By.tagName("a"));
         Set<String> jobLinks = new HashSet<>();
         System.out.println("Found " + links.size() + " <a> tags.");
-        String[] keywords = {"java", "spring", "devops", "microservices", "backend", "web", "fullstack","full stack", "application"};
+        String[] keywords = {"java", "spring","associate","software", "devops","cloud", "python","sql","database","microservices", "backend", "web", "fullstack","full stack", "application","l1","l2","l3","l4","javascript","django","node.js"};
 
         for (WebElement link : links) {
             String text = link.getText().toLowerCase();
@@ -87,11 +87,17 @@ public class urlService {
                 ));
                 String jobText = jobDesc.getText().toLowerCase();
 
+                /*WebElement el = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                        (By.cssSelector("div[class*='KkHoHTxECOJlfvOwixSkytXNUGZFLzsHXgOwcg']"))
+                ));
+                String jobCompany=el.getText();
+                System.out.println("✅ Found " + jobCompany + " matching job Company.");
+                */
                 int matchScore = getMatchScore(resumeText, jobText, keywords);
                 int requiredYears = extractRequiredExperience(jobText);
 
                 String[] keys = {"java", "python", "javascript", "typescript", "c++", "c#", "go", "ruby", "kotlin", "scala", "php", "rust", "swift",".net","asp.net",",net core",
-                        "html", "css", "react", "angular", "vue.js", "svelte", "next.js", "node.js", "express.js", "spring boot", "django", "flask", "laravel", "ruby on rails",
+                        "html", "css", "react", "angular", "vue.js", "svelte", "next.js", "node.js", "express.js", "spring boot", "django", "flask", "laravel", "ruby on rails","html5","css3",
                         "mysql", "postgresql", "mongodb", "oracle", "sql server", "sqlite", "redis", "cassandra", "elasticsearch", "hbase", "nosql", "graphql", "rest api", "json", "xml",
                         "docker", "kubernetes", "jenkins", "gitlab ci", "circleci", "github actions", "ansible", "terraform", "helm", "prometheus", "grafana", "splunk", "nginx", "apache","devops",
                         "aws", "azure", "gcp", "firebase", "heroku", "digitalocean", "cloud functions", "s3", "ec2", "lambda",
@@ -99,12 +105,11 @@ public class urlService {
                         "git", "github", "gitlab", "bitbucket", "svn", "jira", "confluence",
                         "microservices", "monolith", "soa", "rest", "graphql", "mvc", "mvvm", "event-driven", "reactive", "api gateway", "message queue",
                         "kafka", "rabbitmq", "activemq", "mqtt", "nats", "zeromq",
-                        "maven", "gradle", "npm", "yarn", "webpack", "babel", "vite", "sbt", "ant",
+                        "maven", "gradle", "npm", "yarn", "webpack", "babel", "vite", "sbt", "ant","adobe","aem","crm",
                         "oauth2", "jwt", "cors", "authentication", "authorization", "api design", "unit testing", "integration testing", "agile", "scrum", "tdd", "bdd", "ci/cd", "scalability", "performance tuning", "load balancing", "fault tolerance"};
                 List<String> missingKeywords = getMissingKeywords(keys, jobText, resumeText);
-
                 System.out.println("🔗 " + url);
-                System.out.println("ATS Match Score: " + matchScore + "%");
+                System.out.println("Job Description Match Score: " + matchScore + "%");
                 if (requiredYears != -1) {
                     System.out.println("📌 Required Experience: " + requiredYears + "+ years");
                 } else {
@@ -126,14 +131,14 @@ public class urlService {
 
         driver.quit();
     }
-    public static int getMatchScore(String resume, String jd, String[] keywords) {
+    public static int getMatchScore(String resume, String jd, String[] keys) {
         int match = 0;
-        for (String keyword : keywords) {
+        for (String keyword : keys) {
             if (resume.contains(keyword.toLowerCase()) && jd.contains(keyword.toLowerCase())) {
                 match++;
             }
         }
-        return (int) ((match / (double) keywords.length) * 100); // score in %
+        return (int) ((match / (double) keys.length) * 100); // score in %
     }
 
     public static int extractRequiredExperience(String jobDescription) {
@@ -155,10 +160,10 @@ public class urlService {
         return -1; // not found
     }
 
-    public static List<String> getMissingKeywords(String[] keywords, String jobDesc, String resumeText) {
+    public static List<String> getMissingKeywords(String[] keys, String jobDesc, String resumeText) {
         List<String> missing = new ArrayList<>();
 
-        for (String keyword : keywords) {
+        for (String keyword : keys) {
             String lowerKeyword = keyword.toLowerCase();
             if (jobDesc.contains(lowerKeyword) && !resumeText.contains(lowerKeyword)) {
                 missing.add(keyword); // original keyword case
